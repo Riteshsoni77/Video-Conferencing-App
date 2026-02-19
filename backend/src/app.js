@@ -7,6 +7,7 @@ import mongoose  from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
 
 import cors from "cors";
+import userRoutes from "./routes/users.routes.js";
 
 
 const app =express();
@@ -24,7 +25,7 @@ app.get("/abc",(req,res)=>{
     return res.json({"hellow":"world"});
 });
 
-
+app.use("/api/v1/users", userRoutes);
 const start=async()=>{
  app.set("mongo_user")
     const connectionDb = await mongoose.connect("mongodb+srv://riteshsoni1138_db_user:xImM60hyDQm2zrM2@cluster0.fuhqzg3.mongodb.net/?appName=Cluster0");
