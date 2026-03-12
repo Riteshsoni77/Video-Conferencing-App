@@ -14,6 +14,7 @@ import MicOffIcon from '@mui/icons-material/MicOff'
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 import ChatIcon from '@mui/icons-material/Chat'
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -72,6 +73,8 @@ export default function VideoMeetComponent() {
     //    }
 
 
+    
+    let routerTo =useNavigate();
     const getPermissions = async () => {
         try {
             const videoPermission = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -250,8 +253,17 @@ export default function VideoMeetComponent() {
         }
     }
 
-    let addMessage = () => {
+   
 
+    let addMessage = ( data, sender, socketIdSender) => {
+
+      setMessages((prevMessages)=>[
+        ...prevMessages,
+        {sender:sender,data:data}
+      ]);
+     if (socketIdSender !== socketIdRef.current) {
+            setNewMessages((prevNewMessages) => prevNewMessages + 1);
+        }
     }
 
 
@@ -395,7 +407,7 @@ let getDisplayMediaSuccess=(stream)=>{
         } catch (e) { console.log(e) }
 
         window.localStream = stream
-        localVideoref.current.srcObject = stream
+        localVideoRef.current.srcObject = stream
 
 
   for (let id in connections) {
@@ -412,26 +424,25 @@ let getDisplayMediaSuccess=(stream)=>{
             })
         }
 
-        stream.getTracks().forEach(track => track.onended = () => {
+         stream.getTracks().forEach(track => track.onended = () => {
             setScreen(false)
 
             try {
-                let tracks = localVideoRef.current.srcObject.getTracks()
+                let tracks = localVideoref.current.srcObject.getTracks()
                 tracks.forEach(track => track.stop())
             } catch (e) { console.log(e) }
 
             let blackSilence = (...args) => new MediaStream([black(...args), silence()])
             window.localStream = blackSilence()
-            localVideoRef.current.srcObject = window.localStream
+            localVideoref.current.srcObject = window.localStream
 
             getUserMedia()
 
         })
-
     
 }
 
-let getDislayMedia = () => {
+     let getDislayMedia = () => {
         if (screen) {
             if (navigator.mediaDevices.getDisplayMedia) {
                 navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
@@ -456,7 +467,20 @@ let getDislayMedia = () => {
     }
 
     let sendMessage=()=>{
+        socketRef.current.emit("chat-message",message,username);
+        setMessage("");
         
+    }
+
+
+    let handleEndCall = () => {
+        try {
+            let tracks = localVideoref.current.srcObject.getTracks()
+            tracks.forEach(track => track.stop())
+        } catch (e) { }
+        // window.location.href = "/"
+        routerTo("/home");
+
     }
 
     return (
@@ -487,13 +511,26 @@ let getDislayMedia = () => {
                 <div className={styles.chatContainer}> 
                         <h1> chat</h1>
 
-                        <div className={styles.chattingArea}>
-                            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-    
-                            <Button variant="contained" onClick={sendMessage}>Send</Button>
-                        </div>
+                         <div className={styles.chattingDisplay}>
+
+                                {messages.length !== 0 ? messages.map((item, index) => {
+
+                                    console.log(" item ",item);
+                                    return (
+                                        <div style={{ marginBottom: "20px" }} key={index}>
+                                            <p style={{ fontWeight: "bold" }}>{item.sender}</p>
+                                            <p>{item.data}</p>
+                                        </div>
+                                    )
+                                }) : <p>No Messages Yet</p>}
 
 
+                            </div>
+
+                          <div className={styles.chattingArea}>
+                                <TextField value={message} onChange={(e) => setMessage(e.target.value)} id="outlined-basic" label="Enter Your chat" variant="outlined" />
+                                <Button variant='contained' onClick={sendMessage}>Send</Button>
+                            </div>
                         </div>
 
 
@@ -507,7 +544,7 @@ let getDislayMedia = () => {
                             {(video === true) ? <VideocamIcon /> : <VideocamOffIcon />}
                         </IconButton>
 
-                        <IconButton style={{ color: "red" }}>
+                        <IconButton style={{ color: "red" }} onClick={handleEndCall}>
                             <CallEndIcon />
                         </IconButton>
                         <IconButton onClick={handleAudio} style={{ color: "white" }}>
