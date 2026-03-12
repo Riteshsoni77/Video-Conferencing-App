@@ -407,7 +407,7 @@ let getDisplayMediaSuccess=(stream)=>{
         } catch (e) { console.log(e) }
 
         window.localStream = stream
-        localVideoref.current.srcObject = stream
+        localVideoRef.current.srcObject = stream
 
 
   for (let id in connections) {
@@ -424,26 +424,25 @@ let getDisplayMediaSuccess=(stream)=>{
             })
         }
 
-        stream.getTracks().forEach(track => track.onended = () => {
+         stream.getTracks().forEach(track => track.onended = () => {
             setScreen(false)
 
             try {
-                let tracks = localVideoRef.current.srcObject.getTracks()
+                let tracks = localVideoref.current.srcObject.getTracks()
                 tracks.forEach(track => track.stop())
             } catch (e) { console.log(e) }
 
             let blackSilence = (...args) => new MediaStream([black(...args), silence()])
             window.localStream = blackSilence()
-            localVideoRef.current.srcObject = window.localStream
+            localVideoref.current.srcObject = window.localStream
 
             getUserMedia()
 
         })
-
     
 }
 
-let getDislayMedia = () => {
+     let getDislayMedia = () => {
         if (screen) {
             if (navigator.mediaDevices.getDisplayMedia) {
                 navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
