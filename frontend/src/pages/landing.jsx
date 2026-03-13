@@ -1,24 +1,28 @@
 import react from 'react'
-import"../App.css"
+import "../App.css"
 import { Link, useNavigate } from 'react-router-dom'
 import mobileImage from '../assets/mobile.png';
+import backgroundimg from '../assets/background.png';
 
 
 
 export default function LandingPage() {
-    const router=useNavigate();
+    const router = useNavigate();
 
     return (
-        <div className='landingPageContainer'>
-          <nav>
-            <div className='navheader'>
-                <h2>Video Conferencing App </h2>
-                 </div>
-            <div className='navlist'>
-                <p onClick={()=>{
-                    router("/gest")
-                }}> Join as Guest</p>
-                 <p onClick={() => {
+        <div
+            className='landingPageContainer'
+            style={{ backgroundImage: `url(${backgroundimg})` }}
+        >
+            <nav>
+                <div className='navheader'>
+                    <h2>Video Conferencing App </h2>
+                </div>
+                <div className='navlist'>
+                    <p onClick={() => {
+                        router("/gest")
+                    }}> Join as Guest</p>
+                    <p onClick={() => {
                         router("/auth")
 
                     }}>Register</p>
@@ -28,10 +32,10 @@ export default function LandingPage() {
                     }} role='button'>
                         <p>Login</p>
                     </div>
-            </div>
-          </nav>
+                </div>
+            </nav>
 
-         <div className="landingMainContainer">
+            <div className="landingMainContainer">
                 <div>
                     <h1><span style={{ color: "#FF9839" }}>Connect</span> with your loved Ones</h1>
 
@@ -42,7 +46,7 @@ export default function LandingPage() {
                 </div>
                 <div>
 
-                   
+
                     <img src={mobileImage} alt="" />
 
                 </div>
