@@ -1,6 +1,7 @@
 import react from 'react'
 import"../App.css"
 import { Link, useNavigate } from 'react-router-dom'
+import mobileImage from '../assets/mobile.png';
 
 
 
@@ -41,7 +42,8 @@ export default function LandingPage() {
                 </div>
                 <div>
 
-                    <img src="/assets/mobile.png" alt="" />
+                   
+                    <img src={mobileImage} alt="" />
 
                 </div>
             </div>
